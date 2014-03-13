@@ -1,16 +1,12 @@
 "#leftMenu": {
 	top: "0dp",
 	left: "0dp",
-	width: "250dp",
-	zIndex: "2",
-	backgroundColor : "#FFF"
+	zIndex: "2"
 },
 "#rightMenu": {
 	top: "0dp",
 	right: "0dp",
-	width: "250dp",
-	zIndex: "1",
-	backgroundColor : "#FFF"
+	zIndex: "1"
 },
 "#navview": {
 	top: "0dp",
