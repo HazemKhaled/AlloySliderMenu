@@ -73,18 +73,27 @@ $.movableview.addEventListener('touchmove', function(e) {
 		$.movableview.left = newLeft;
 		$.movableview.top = (Math.abs(newLeft) / 250) * 85;
 		$.movableview.height = parseInt(100 - ((Math.abs(newLeft) / 250) * 50)) + "%";
+		if (newLeft > 0) {
+			$.leftMenu.opacity = Math.abs(newLeft) / 250;
+		} else {
+			$.rightMenu.opacity = Math.abs(newLeft) / 250;
+		}
 	} else {
 		// Sometimes newLeft goes beyond its bounds so the view gets stuck.
 		// This is a hack to fix that.
 		if ((touchRightStarted && newLeft < 0) || (touchLeftStarted && newLeft > 0)) {
 			$.movableview.left = 0;
 			$.movableview.height = "100%";
+			$.leftMenu.opacity = 0;
+			$.rightMenu.opacity = 0;
 		} else if (touchRightStarted && newLeft > 250) {
 			$.movableview.left = 250;
 			$.movableview.height = "50%";
+			$.leftMenu.opacity = 1;
 		} else if (touchLeftStarted && newLeft < -250) {
 			$.movableview.left = -250;
 			$.movableview.height = "50%";
+			$.rightMenu.opacity = 1;
 		}
 	}
 	if (newLeft > 5 && !touchLeftStarted && !touchRightStarted) {
