@@ -1,0 +1,24 @@
+".container": {
+	 height: Ti.UI.SIZE,
+	 layout: "vertical",
+	 width: 250,
+	 right: 0
+}
+".title": {
+	bottom: 40,
+	left: 40,
+	font: {
+		fontWeight: "bold",
+		fontSize: 20
+	}
+}
+"View": {
+	height: 40
+}
+"ImageView": {
+	left: 15
+}
+"Label": {
+	left: 62,
+	color: "#ffffff"
+}

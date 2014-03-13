@@ -1,0 +1,32 @@
+<Alloy>
+	<View class="container">
+		<Label class="title">Title right menu</Label>
+		<View>
+			<ImageView image="/images/IconHome.png" />
+			<Label>Home</Label>
+		</View>
+		<View>
+			<ImageView image="/images/IconCalendar.png" />
+			<Label>Attendance Calendar</Label>
+		</View>
+		<View>
+			<ImageView image="/images/IconProfile.png" />
+			<Label>Apply for Premession</Label>
+		</View>
+		<View>
+			<ImageView image="/images/IconSettings.png" />
+			<Label>Apply for Leave</Label>
+		</View>
+		<View>
+			<ImageView image="/images/IconCalendar.png" />
+			<Label>Payslips</Label>
+		</View>
+		<View>
+			<ImageView image="/images/IconProfile.png" />
+			<Label>Certificates</Label>
+		</View>
+		<View>
+			<Label>Log out</Label>
+		</View>
+	</View>
+</Alloy>
