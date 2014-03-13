@@ -1,19 +1,22 @@
 var animateRight = Ti.UI.createAnimation({
 	left : 250,
+	height : "50%",
 	curve : Ti.UI.ANIMATION_CURVE_EASE_OUT,
-	duration : 150
+	duration : 250
 });
 
 var animateReset = Ti.UI.createAnimation({
 	left : 0,
+	height : "100%",
 	curve : Ti.UI.ANIMATION_CURVE_EASE_OUT,
-	duration : 150
+	duration : 250
 });
 
 var animateLeft = Ti.UI.createAnimation({
 	left : -250,
+	height : "50%",
 	curve : Ti.UI.ANIMATION_CURVE_EASE_OUT,
-	duration : 150
+	duration : 250
 });
 
 var touchStartX = 0;
@@ -67,18 +70,22 @@ $.movableview.addEventListener('touchmove', function(e) {
 	if ((touchRightStarted && newLeft <= 250 && newLeft >= 0) || 
 		(touchLeftStarted && newLeft <= 0 && newLeft >= -250)) {
 		$.movableview.left = newLeft;
-	}
+		$.movableview.height = 100 - ((Math.abs(newLeft) / 250) * 50) + "%";
+	} 
 	else {
 		// Sometimes newLeft goes beyond its bounds so the view gets stuck.
 		// This is a hack to fix that.
 		if ((touchRightStarted && newLeft < 0) || (touchLeftStarted && newLeft > 0)) {
 			$.movableview.left = 0;
-		}
+			$.movableview.height = "100%";
+		} 
 		else if (touchRightStarted && newLeft > 250) {
 			$.movableview.left = 250;
-		}
+			$.movableview.height = "50%";
+		} 
 		else if (touchLeftStarted && newLeft < -250) {
 			$.movableview.left = -250;
+			$.movableview.height = "50%";
 		}
 	}
 	if (newLeft > 5 && !touchLeftStarted && !touchRightStarted) {
