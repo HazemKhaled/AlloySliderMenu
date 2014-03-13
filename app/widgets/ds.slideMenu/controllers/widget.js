@@ -53,6 +53,14 @@ $.movableview.addEventListener('touchend', function(e) {
 		$.leftButton.touchEnabled = true;
 		$.rightButton.touchEnabled = true;
 		$.movableview.animate(animateReset);
+		$.leftMenu.animate({
+			opacity : 0,
+			duration : 150
+		});
+		$.rightMenu.animate({
+			opacity : 0,
+			duration : 150
+		});
 		hasSlided = false;
 	}
 	Ti.App.fireEvent("sliderToggled", {
@@ -129,6 +137,10 @@ exports.toggleLeftSlider = function() {
 	if (!hasSlided) {
 		direction = "right";
 		$.leftButton.touchEnabled = false;
+		$.leftMenu.animate({
+			opacity : 1,
+			duration : 500
+		});
 		$.movableview.animate(animateRight);
 		hasSlided = true;
 	} else {
@@ -147,6 +159,10 @@ exports.toggleRightSlider = function() {
 	if (!hasSlided) {
 		direction = "left";
 		$.rightButton.touchEnabled = false;
+		$.rightMenu.animate({
+			opacity : 1,
+			duration : 500
+		});
 		$.movableview.animate(animateLeft);
 		hasSlided = true;
 	} else {
