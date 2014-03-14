@@ -1,7 +1,7 @@
 
 // center
-var currentView = Alloy.createController("view1").getView();
-$.ds.contentview.add(currentView);
+var homeView = Alloy.createController("home").getView();
+$.ds.movableview.add(homeView);
 
 // left
 var leftView = Alloy.createController("menu/left").getView();

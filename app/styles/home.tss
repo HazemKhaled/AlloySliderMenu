@@ -1,0 +1,18 @@
+".container": {
+	backgroundColor: "#ffffff",
+	layout: "vertical"
+}
+".header": {
+	height: 59,
+	backgroundColor: "silver"
+}
+"#leftBtn": {
+	left: 5,
+	bottom: 5
+}
+"#rightBtn": {
+	right: 5,
+	bottom: 5
+}
+".content": {
+}
