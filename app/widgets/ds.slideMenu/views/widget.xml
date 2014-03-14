@@ -6,14 +6,6 @@
 		<View id="rightMenu">
 			<View id="rightView" />
 		</View>
-		<View id="movableview">
-			<View id="shadowview">
-				<View id="navview">
-					<Button id="leftButton" />
-					<Button id="rightButton" />
-				</View>
-				<View id="contentview" />
-			</View>
-		</View>
+		<View id="movableview" />
 	</View>
 </Alloy>

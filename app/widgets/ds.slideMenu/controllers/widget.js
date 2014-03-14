@@ -29,6 +29,8 @@ var buttonPressed = false;
 var hasSlided = false;
 var direction = "reset";
 
+var leftButton = {}, rightButton = {};
+
 $.movableview.addEventListener('touchstart', function(e) {
 	touchStartX = e.x;
 });
@@ -40,18 +42,18 @@ $.movableview.addEventListener('touchend', function(e) {
 	}
 	if ($.movableview.left >= 150 && touchRightStarted) {
 		direction = "right";
-		$.leftButton.touchEnabled = false;
+		leftButton.touchEnabled = false;
 		$.movableview.animate(animateRight);
 		hasSlided = true;
 	} else if ($.movableview.left <= -150 && touchLeftStarted) {
 		direction = "left";
-		$.rightButton.touchEnabled = false;
+		rightButton.touchEnabled = false;
 		$.movableview.animate(animateLeft);
 		hasSlided = true;
 	} else {
 		direction = "reset";
-		$.leftButton.touchEnabled = true;
-		$.rightButton.touchEnabled = true;
+		leftButton.touchEnabled = true;
+		rightButton.touchEnabled = true;
 		$.movableview.animate(animateReset);
 		$.leftMenu.animate({
 			opacity : 0,
@@ -119,24 +121,10 @@ $.movableview.addEventListener('touchmove', function(e) {
 	}
 });
 
-$.leftButton.addEventListener('touchend', function(e) {
-	if (!touchRightStarted && !touchLeftStarted) {
-		buttonPressed = true;
-		$.toggleLeftSlider();
-	}
-});
-
-$.rightButton.addEventListener('touchend', function(e) {
-	if (!touchRightStarted && !touchLeftStarted) {
-		buttonPressed = true;
-		$.toggleRightSlider();
-	}
-});
-
 exports.toggleLeftSlider = function() {
 	if (!hasSlided) {
 		direction = "right";
-		$.leftButton.touchEnabled = false;
+		leftButton.touchEnabled = false;
 		$.leftMenu.animate({
 			opacity : 1,
 			duration : 500
@@ -145,7 +133,7 @@ exports.toggleLeftSlider = function() {
 		hasSlided = true;
 	} else {
 		direction = "reset";
-		$.leftButton.touchEnabled = true;
+		leftButton.touchEnabled = true;
 		$.movableview.animate(animateReset);
 		hasSlided = false;
 	}
@@ -158,7 +146,7 @@ exports.toggleLeftSlider = function() {
 exports.toggleRightSlider = function() {
 	if (!hasSlided) {
 		direction = "left";
-		$.rightButton.touchEnabled = false;
+		rightButton.touchEnabled = false;
 		$.rightMenu.animate({
 			opacity : 1,
 			duration : 500
@@ -167,7 +155,7 @@ exports.toggleRightSlider = function() {
 		hasSlided = true;
 	} else {
 		direction = "reset";
-		$.rightButton.touchEnabled = true;
+		rightButton.touchEnabled = true;
 		$.movableview.animate(animateReset);
 		hasSlided = false;
 	}
@@ -178,12 +166,35 @@ exports.toggleRightSlider = function() {
 };
 
 exports.handleRotation = function() {
-/*
-  	Add the orientation handler in the controller that loads this widget. Like this:
-	Ti.Gesture.addEventListener('orientationchange', function() {
-		$.ds.handleRotation();
-	});
-*/
-	$.movableview.width = $.navview.width = $.contentview.width = Ti.Platform.displayCaps.platformWidth;
-	$.movableview.height = $.navview.height = $.contentview.height = Ti.Platform.displayCaps.platformHeight;
+	/*
+	 Add the orientation handler in the controller that loads this widget. Like this:
+	 Ti.Gesture.addEventListener('orientationchange', function() {
+	 $.ds.handleRotation();
+	 });
+	 */
+	$.movableview.width = $.navview.width = Ti.Platform.displayCaps.platformWidth;
+	$.movableview.height = $.navview.height = Ti.Platform.displayCaps.platformHeight;
+};
+
+$.init = function(args) {
+	if (args.hasOwnProperty("leftButton")) {
+		leftButton = args.leftButton;
+
+		leftButton.addEventListener('touchend', function(e) {
+			if (!touchRightStarted && !touchLeftStarted) {
+				buttonPressed = true;
+				$.toggleLeftSlider();
+			}
+		});
+	}
+
+	if (args.hasOwnProperty("rightButton")) {
+		rightButton = args.rightButton;
+		rightButton.addEventListener('touchend', function(e) {
+			if (!touchRightStarted && !touchLeftStarted) {
+				buttonPressed = true;
+				$.toggleRightSlider();
+			}
+		});
+	}
 };

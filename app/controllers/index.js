@@ -1,3 +1,4 @@
+Alloy.Globals.sideMenu = $.ds;
 
 // center
 var homeView = Alloy.createController("home").getView();
