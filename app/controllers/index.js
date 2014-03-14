@@ -1,6 +1,3 @@
-if (OS_IOS || OS_ANDROID) {
-	Alloy.Globals.Map = require('ti.map');
-}
 
 // center
 var currentView = Alloy.createController("view1").getView();
