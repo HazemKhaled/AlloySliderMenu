@@ -1,4 +1,6 @@
 Alloy.Globals.sideMenu.init({
 	leftButton : $.leftBtn,
-	rightButton : $.rightBtn
+	rightButton : $.rightBtn,
+	disableRight: false,
+	disableLeft: false
 });

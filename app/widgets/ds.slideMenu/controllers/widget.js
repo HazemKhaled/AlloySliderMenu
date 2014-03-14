@@ -29,7 +29,7 @@ var buttonPressed = false;
 var hasSlided = false;
 var direction = "reset";
 
-var leftButton = {}, rightButton = {};
+var leftButton = {}, rightButton = {}, disableLeft = false, disableRight = false;
 
 $.movableview.addEventListener('touchstart', function(e) {
 	touchStartX = e.x;
@@ -40,12 +40,13 @@ $.movableview.addEventListener('touchend', function(e) {
 		buttonPressed = false;
 		return;
 	}
-	if ($.movableview.left >= 150 && touchRightStarted) {
+
+	if ($.movableview.left >= 150 && touchRightStarted && !disableLeft) {
 		direction = "right";
 		leftButton.touchEnabled = false;
 		$.movableview.animate(animateRight);
 		hasSlided = true;
-	} else if ($.movableview.left <= -150 && touchLeftStarted) {
+	} else if ($.movableview.left <= -150 && touchLeftStarted && !disableRight) {
 		direction = "left";
 		rightButton.touchEnabled = false;
 		$.movableview.animate(animateLeft);
@@ -197,4 +198,8 @@ $.init = function(args) {
 			}
 		});
 	}
+
+	disableLeft = args.disableLeft || false;
+	disableRight = args.disableRight || false;
+
 };
