@@ -93,16 +93,16 @@ $.movableview.addEventListener('touchmove', function(e) {
 		// This is a hack to fix that.
 		if ((touchRightStarted && newLeft < 0) || (touchLeftStarted && newLeft > 0)) {
 			$.movableview.left = 0;
-			$.movableview.height = "100%";
+			$.movableview.top = $.movableview.bottom = 0;
 			$.leftMenu.opacity = 0;
 			$.rightMenu.opacity = 0;
 		} else if (touchRightStarted && newLeft > 250) {
 			$.movableview.left = 250;
-			$.movableview.height = "50%";
+			$.movableview.top = $.movableview.bottom = 85;
 			$.leftMenu.opacity = 1;
 		} else if (touchLeftStarted && newLeft < -250) {
 			$.movableview.left = -250;
-			$.movableview.height = "50%";
+			$.movableview.top = $.movableview.bottom = 85;
 			$.rightMenu.opacity = 1;
 		}
 	}
