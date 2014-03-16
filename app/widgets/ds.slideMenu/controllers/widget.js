@@ -51,7 +51,7 @@ $.movableview.addEventListener('touchend', function(e) {
 		$.leftMenu.animate({
 			transform : matrix2d.scale(1, 1),
 			opacity : 1,
-			duration : 150
+			duration : 400
 		});
 		hasSlided = true;
 	} else if ($.movableview.left <= -150 && touchLeftStarted && !disableRight) {
@@ -61,7 +61,7 @@ $.movableview.addEventListener('touchend', function(e) {
 		$.rightMenu.animate({
 			transform : matrix2d.scale(1, 1),
 			opacity : 1,
-			duration : 150
+			duration : 400
 		});
 		hasSlided = true;
 	} else {
@@ -72,12 +72,12 @@ $.movableview.addEventListener('touchend', function(e) {
 		$.leftMenu.animate({
 			transform : matrix2d.scale(1.3, 1.3),
 			opacity : 0,
-			duration : 250
+			duration : 400
 		});
 		$.rightMenu.animate({
 			transform : matrix2d.scale(1.3, 1.3),
 			opacity : 0,
-			duration : 250
+			duration : 400
 		});
 		hasSlided = false;
 	}
@@ -108,7 +108,7 @@ $.movableview.addEventListener('touchmove', function(e) {
 		var animation = Ti.UI.createAnimation({
 			left : newLeft,
 			transform : matrix2d.scale(scale, scale),
-			duration : 10
+			duration : 0
 		});
 		animatingNow = true;
 		$.movableview.animate(animation, function() {
@@ -119,13 +119,13 @@ $.movableview.addEventListener('touchmove', function(e) {
 			$.leftMenu.animate({
 				transform : matrix2d.scale(scaleMenu, scaleMenu),
 				opacity : Math.abs(newLeft) / 200,
-				duration : 10
+				duration : 0
 			});
 		} else {
 			$.rightMenu.animate({
 				transform : matrix2d.scale(scaleMenu, scaleMenu),
 				opacity : Math.abs(newLeft) / 200,
-				duration : 10
+				duration : 0
 			});
 		}
 	} else if (animatingNow === false) {
@@ -167,7 +167,7 @@ exports.toggleLeftSlider = function() {
 		$.leftMenu.animate({
 			transform : matrix2d.scale(1, 1),
 			opacity : 1,
-			duration : 250
+			duration : 400
 		});
 		$.movableview.animate(animateRight);
 		hasSlided = true;
@@ -177,7 +177,7 @@ exports.toggleLeftSlider = function() {
 		$.leftMenu.animate({
 			transform : matrix2d.scale(1.3, 1.3),
 			opacity : 0,
-			duration : 250
+			duration : 400
 		});
 		$.movableview.animate(animateReset);
 		hasSlided = false;
@@ -195,7 +195,7 @@ exports.toggleRightSlider = function() {
 		$.rightMenu.animate({
 			transform : matrix2d.scale(1, 1),
 			opacity : 1,
-			duration : 250
+			duration : 400
 		});
 		$.movableview.animate(animateLeft);
 		hasSlided = true;
@@ -205,7 +205,7 @@ exports.toggleRightSlider = function() {
 		$.leftMenu.animate({
 			transform : matrix2d.scale(1.3, 1.3),
 			opacity : 0,
-			duration : 250
+			duration : 400
 		});
 		$.movableview.animate(animateReset);
 		hasSlided = false;
