@@ -1,25 +1,23 @@
+var matrix2d = Ti.UI.create2DMatrix();
 var animateRight = Ti.UI.createAnimation({
-	left : 250,
-	top : 85,
-	bottom : 85,
-	curve : Ti.UI.ANIMATION_CURVE_EASE_OUT,
-	duration : 250
+	left : 200,
+	transform : matrix2d.scale(0.7, 0.7),
+	curve : Ti.UI.ANIMATION_CURVE_EASE_IN_OUT,
+	duration : 400
 });
 
 var animateReset = Ti.UI.createAnimation({
 	left : 0,
-	top : "auto",
-	bottom : "auto",
-	curve : Ti.UI.ANIMATION_CURVE_EASE_OUT,
-	duration : 250
+	transform : matrix2d.scale(1, 1),
+	curve : Ti.UI.ANIMATION_CURVE_EASE_IN_OUT,
+	duration : 400
 });
 
 var animateLeft = Ti.UI.createAnimation({
-	left : -250,
-	top : 85,
-	bottom : 85,
-	curve : Ti.UI.ANIMATION_CURVE_EASE_OUT,
-	duration : 250
+	left : -200,
+	transform : matrix2d.scale(0.7, 0.7),
+	curve : Ti.UI.ANIMATION_CURVE_EASE_IN_OUT,
+	duration : 400
 });
 
 var touchStartX = 0;
@@ -28,6 +26,7 @@ var touchLeftStarted = false;
 var buttonPressed = false;
 var hasSlided = false;
 var direction = "reset";
+var animatingNow = false;
 
 var leftButton = {}, rightButton = {}, disableLeft = false, disableRight = false;
 
@@ -45,11 +44,21 @@ $.movableview.addEventListener('touchend', function(e) {
 		direction = "right";
 		leftButton.touchEnabled = false;
 		$.movableview.animate(animateRight);
+		$.leftMenu.animate({
+			transform : matrix2d.scale(1, 1),
+			opacity : 1,
+			duration : 150
+		});
 		hasSlided = true;
 	} else if ($.movableview.left <= -150 && touchLeftStarted && !disableRight) {
 		direction = "left";
 		rightButton.touchEnabled = false;
 		$.movableview.animate(animateLeft);
+		$.rightMenu.animate({
+			transform : matrix2d.scale(1, 1),
+			opacity : 1,
+			duration : 150
+		});
 		hasSlided = true;
 	} else {
 		direction = "reset";
@@ -57,12 +66,14 @@ $.movableview.addEventListener('touchend', function(e) {
 		rightButton.touchEnabled = true;
 		$.movableview.animate(animateReset);
 		$.leftMenu.animate({
+			transform : matrix2d.scale(1.3, 1.3),
 			opacity : 0,
-			duration : 150
+			duration : 250
 		});
 		$.rightMenu.animate({
+			transform : matrix2d.scale(1.3, 1.3),
 			opacity : 0,
-			duration : 150
+			duration : 250
 		});
 		hasSlided = false;
 	}
@@ -75,34 +86,58 @@ $.movableview.addEventListener('touchend', function(e) {
 });
 
 $.movableview.addEventListener('touchmove', function(e) {
+
 	var coords = $.movableview.convertPointToView({
 		x : e.x,
 		y : e.y
 	}, $.containerview);
 	var newLeft = coords.x - touchStartX;
-	if ((touchRightStarted && newLeft <= 250 && newLeft >= 0) || (touchLeftStarted && newLeft <= 0 && newLeft >= -250)) {
-		$.movableview.left = newLeft;
-		$.movableview.top = $.movableview.bottom = (Math.abs(newLeft) / 250) * 85;
+
+	if (animatingNow === false) {
+		Ti.API.info("Animating now, newLeft : " + newLeft);
+	}
+
+	if (animatingNow === false && ((touchRightStarted && newLeft <= 200 && newLeft >= 0) || (touchLeftStarted && newLeft <= 0 && newLeft >= -200))) {
+
+		var scale = 1 - ((Math.abs(newLeft) / 200) * 0.3);
+		var scaleMenu = 1.3 - ((Math.abs(newLeft) / 200) * 0.3);
+		var animation = Ti.UI.createAnimation({
+			left : newLeft,
+			transform : matrix2d.scale(scale, scale),
+			duration : 10
+		});
+		animatingNow = true;
+		$.movableview.animate(animation, function() {
+			animatingNow = false;
+		});
 		if (newLeft > 0) {
-			$.leftMenu.opacity = Math.abs(newLeft) / 250;
+
+			$.leftMenu.animate({
+				transform : matrix2d.scale(scaleMenu, scaleMenu),
+				opacity : Math.abs(newLeft) / 200,
+				duration : 10
+			});
 		} else {
-			$.rightMenu.opacity = Math.abs(newLeft) / 250;
+			$.rightMenu.animate({
+				transform : matrix2d.scale(scaleMenu, scaleMenu),
+				opacity : Math.abs(newLeft) / 200,
+				duration : 10
+			});
 		}
-	} else {
+	} else if (animatingNow === false) {
 		// Sometimes newLeft goes beyond its bounds so the view gets stuck.
 		// This is a hack to fix that.
 		if ((touchRightStarted && newLeft < 0) || (touchLeftStarted && newLeft > 0)) {
 			$.movableview.left = 0;
-			$.movableview.top = $.movableview.bottom = 0;
-			$.leftMenu.opacity = 0;
-			$.rightMenu.opacity = 0;
-		} else if (touchRightStarted && newLeft > 250) {
-			$.movableview.left = 250;
-			$.movableview.top = $.movableview.bottom = 85;
+			//$.movableview.top = $.movableview.bottom = 0;
+			$.leftMenu.opacity = $.rightMenu.opacity = 0;
+		} else if (touchRightStarted && newLeft > 200) {
+			$.movableview.left = 200;
+			//$.movableview.top = $.movableview.bottom = 85;
 			$.leftMenu.opacity = 1;
-		} else if (touchLeftStarted && newLeft < -250) {
-			$.movableview.left = -250;
-			$.movableview.top = $.movableview.bottom = 85;
+		} else if (touchLeftStarted && newLeft < -200) {
+			$.movableview.left = -200;
+			//$.movableview.top = $.movableview.bottom = 85;
 			$.rightMenu.opacity = 1;
 		}
 	}
@@ -126,14 +161,20 @@ exports.toggleLeftSlider = function() {
 		direction = "right";
 		leftButton.touchEnabled = false;
 		$.leftMenu.animate({
+			transform : matrix2d.scale(1, 1),
 			opacity : 1,
-			duration : 500
+			duration : 250
 		});
 		$.movableview.animate(animateRight);
 		hasSlided = true;
 	} else {
 		direction = "reset";
 		leftButton.touchEnabled = true;
+		$.leftMenu.animate({
+			transform : matrix2d.scale(1.3, 1.3),
+			opacity : 0,
+			duration : 250
+		});
 		$.movableview.animate(animateReset);
 		hasSlided = false;
 	}
@@ -148,14 +189,20 @@ exports.toggleRightSlider = function() {
 		direction = "left";
 		rightButton.touchEnabled = false;
 		$.rightMenu.animate({
+			transform : matrix2d.scale(1, 1),
 			opacity : 1,
-			duration : 500
+			duration : 250
 		});
 		$.movableview.animate(animateLeft);
 		hasSlided = true;
 	} else {
 		direction = "reset";
 		rightButton.touchEnabled = true;
+		$.leftMenu.animate({
+			transform : matrix2d.scale(1.3, 1.3),
+			opacity : 0,
+			duration : 250
+		});
 		$.movableview.animate(animateReset);
 		hasSlided = false;
 	}
