@@ -30,6 +30,10 @@ var animatingNow = false;
 
 var leftButton = {}, rightButton = {}, disableLeft = false, disableRight = false;
 
+// Scale menus
+$.leftMenu.transform = matrix2d.scale(1.3, 1.3);
+$.rightMenu.transform = matrix2d.scale(1.3, 1.3);
+
 $.movableview.addEventListener('touchstart', function(e) {
 	touchStartX = e.x;
 });
