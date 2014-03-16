@@ -48,7 +48,7 @@ $.movableview.addEventListener('touchend', function(e) {
 		return;
 	}
 
-	if ($.movableview.left >= 150 && touchRightStarted && !disableLeft) {
+	if ($.movableview.left >= 120 && touchRightStarted && !disableLeft) {
 		direction = "right";
 		leftButton.touchEnabled = false;
 		$.movableview.animate(animateRight);
@@ -58,7 +58,7 @@ $.movableview.addEventListener('touchend', function(e) {
 			duration : 400
 		});
 		hasSlided = true;
-	} else if ($.movableview.left <= -150 && touchLeftStarted && !disableRight) {
+	} else if ($.movableview.left <= -120 && touchLeftStarted && !disableRight) {
 		direction = "left";
 		rightButton.touchEnabled = false;
 		$.movableview.animate(animateLeft);
@@ -105,8 +105,8 @@ $.movableview.addEventListener('touchmove', function(e) {
 	}, $.containerview);
 	var newLeft = coords.x - touchStartX;
 
-	if (animatingNow === false) {
-		Ti.API.info("Animating now, newLeft : " + newLeft);
+	if (animatingNow === true) {
+		Ti.API.debug("Animating now, newLeft : " + newLeft);
 	}
 
 	if (animatingNow === false && ((touchRightStarted && newLeft <= 200 && newLeft >= 0 && !disableLeft) || (touchLeftStarted && newLeft <= 0 && newLeft >= -200 && !disableRight))) {
@@ -116,7 +116,7 @@ $.movableview.addEventListener('touchmove', function(e) {
 		var animation = Ti.UI.createAnimation({
 			left : newLeft,
 			transform : matrix2d.scale(scale, scale),
-			duration : 0
+			duration : 10
 		});
 		animatingNow = true;
 		$.movableview.animate(animation, function() {
@@ -127,13 +127,13 @@ $.movableview.addEventListener('touchmove', function(e) {
 			$.leftMenu.animate({
 				transform : matrix2d.scale(scaleMenu, scaleMenu),
 				opacity : Math.abs(newLeft) / 200,
-				duration : 0
+				duration : 10
 			});
 		} else {
 			$.rightMenu.animate({
 				transform : matrix2d.scale(scaleMenu, scaleMenu),
 				opacity : Math.abs(newLeft) / 200,
-				duration : 0
+				duration : 10
 			});
 		}
 	} else if (animatingNow === false) {
@@ -141,16 +141,20 @@ $.movableview.addEventListener('touchmove', function(e) {
 		// This is a hack to fix that.
 		if ((touchRightStarted && newLeft < 0) || (touchLeftStarted && newLeft > 0)) {
 			$.movableview.left = 0;
-			//$.movableview.top = $.movableview.bottom = 0;
+			$.movableview.transform = matrix2d.scale(1, 1);
 			$.leftMenu.opacity = $.rightMenu.opacity = 0;
+			$.leftMenu.transform = matrix2d.scale(1.3, 1.3);
+			$.rightMenu.transform = matrix2d.scale(1.3, 1.3);
 		} else if (touchRightStarted && newLeft > 200 && !disableLeft) {
 			$.movableview.left = 200;
-			//$.movableview.top = $.movableview.bottom = 85;
+			$.movableview.transform = matrix2d.scale(0.7, 0.7);
 			$.leftMenu.opacity = 1;
+			$.leftMenu.transform = matrix2d.scale(1, 1);
 		} else if (touchLeftStarted && newLeft < -200 && !disableRight) {
 			$.movableview.left = -200;
-			//$.movableview.top = $.movableview.bottom = 85;
+			$.movableview.transform = matrix2d.scale(0.7, 0.7);
 			$.rightMenu.opacity = 1;
+			$.rightMenu.transform = matrix2d.scale(1, 1);
 		}
 	}
 	if (newLeft > 5 && !touchLeftStarted && !touchRightStarted && !disableLeft) {
