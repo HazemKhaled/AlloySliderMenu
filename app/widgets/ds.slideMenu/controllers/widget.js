@@ -31,8 +31,12 @@ var animatingNow = false;
 var leftButton = {}, rightButton = {}, disableLeft = false, disableRight = false;
 
 // Scale menus
-$.leftMenu.transform = matrix2d.scale(1.3, 1.3);
-$.rightMenu.transform = matrix2d.scale(1.3, 1.3);
+if (!disableLeft) {
+	$.leftMenu.transform = matrix2d.scale(1.3, 1.3);
+}
+if (!disableRight) {
+	$.rightMenu.transform = matrix2d.scale(1.3, 1.3);
+}
 
 $.movableview.addEventListener('touchstart', function(e) {
 	touchStartX = e.x;
@@ -69,16 +73,20 @@ $.movableview.addEventListener('touchend', function(e) {
 		leftButton.touchEnabled = true;
 		rightButton.touchEnabled = true;
 		$.movableview.animate(animateReset);
-		$.leftMenu.animate({
-			transform : matrix2d.scale(1.3, 1.3),
-			opacity : 0,
-			duration : 400
-		});
-		$.rightMenu.animate({
-			transform : matrix2d.scale(1.3, 1.3),
-			opacity : 0,
-			duration : 400
-		});
+		if (!disableLeft) {
+			$.leftMenu.animate({
+				transform : matrix2d.scale(1.3, 1.3),
+				opacity : 0,
+				duration : 400
+			});
+		}
+		if (!disableRight) {
+			$.rightMenu.animate({
+				transform : matrix2d.scale(1.3, 1.3),
+				opacity : 0,
+				duration : 400
+			});
+		}
 		hasSlided = false;
 	}
 	Ti.App.fireEvent("sliderToggled", {
@@ -101,7 +109,7 @@ $.movableview.addEventListener('touchmove', function(e) {
 		Ti.API.info("Animating now, newLeft : " + newLeft);
 	}
 
-	if (animatingNow === false && ((touchRightStarted && newLeft <= 200 && newLeft >= 0) || (touchLeftStarted && newLeft <= 0 && newLeft >= -200))) {
+	if (animatingNow === false && ((touchRightStarted && newLeft <= 200 && newLeft >= 0 && !disableLeft) || (touchLeftStarted && newLeft <= 0 && newLeft >= -200 && !disableRight))) {
 
 		var scale = 1 - ((Math.abs(newLeft) / 200) * 0.3);
 		var scaleMenu = 1.3 - ((Math.abs(newLeft) / 200) * 0.3);
@@ -135,23 +143,23 @@ $.movableview.addEventListener('touchmove', function(e) {
 			$.movableview.left = 0;
 			//$.movableview.top = $.movableview.bottom = 0;
 			$.leftMenu.opacity = $.rightMenu.opacity = 0;
-		} else if (touchRightStarted && newLeft > 200) {
+		} else if (touchRightStarted && newLeft > 200 && !disableLeft) {
 			$.movableview.left = 200;
 			//$.movableview.top = $.movableview.bottom = 85;
 			$.leftMenu.opacity = 1;
-		} else if (touchLeftStarted && newLeft < -200) {
+		} else if (touchLeftStarted && newLeft < -200 && !disableRight) {
 			$.movableview.left = -200;
 			//$.movableview.top = $.movableview.bottom = 85;
 			$.rightMenu.opacity = 1;
 		}
 	}
-	if (newLeft > 5 && !touchLeftStarted && !touchRightStarted) {
+	if (newLeft > 5 && !touchLeftStarted && !touchRightStarted && !disableLeft) {
 		touchRightStarted = true;
 		Ti.App.fireEvent("sliderToggled", {
 			hasSlided : false,
 			direction : "right"
 		});
-	} else if (newLeft < -5 && !touchRightStarted && !touchLeftStarted) {
+	} else if (newLeft < -5 && !touchRightStarted && !touchLeftStarted && !disableRight) {
 		touchLeftStarted = true;
 		Ti.App.fireEvent("sliderToggled", {
 			hasSlided : false,
@@ -161,6 +169,11 @@ $.movableview.addEventListener('touchmove', function(e) {
 });
 
 exports.toggleLeftSlider = function() {
+
+	if (disableLeft) {
+		return;
+	}
+
 	if (!hasSlided) {
 		direction = "right";
 		leftButton.touchEnabled = false;
@@ -189,6 +202,11 @@ exports.toggleLeftSlider = function() {
 };
 
 exports.toggleRightSlider = function() {
+
+	if (disableRight) {
+		return;
+	}
+
 	if (!hasSlided) {
 		direction = "left";
 		rightButton.touchEnabled = false;
