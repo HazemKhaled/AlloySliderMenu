@@ -30,6 +30,9 @@ var animatingNow = false;
 
 var leftButton = {}, rightButton = {}, disableLeft = false, disableRight = false;
 
+$.movableview.width = Ti.Platform.displayCaps.platformWidth + "px";
+$.movableview.height = (Ti.Platform.displayCaps.platformHeight - 50) + "px";
+
 // Scale menus
 if (!disableLeft) {
 	$.leftMenu.transform = matrix2d.scale(1.3, 1.3);
@@ -96,81 +99,82 @@ $.movableview.addEventListener('touchend', function(e) {
 	touchRightStarted = false;
 	touchLeftStarted = false;
 });
+if (OS_IOS) {
+	$.movableview.addEventListener('touchmove', function(e) {
 
-$.movableview.addEventListener('touchmove', function(e) {
+		var coords = $.movableview.convertPointToView({
+			x : e.x,
+			y : e.y
+		}, $.containerview);
+		var newLeft = coords.x - touchStartX;
 
-	var coords = $.movableview.convertPointToView({
-		x : e.x,
-		y : e.y
-	}, $.containerview);
-	var newLeft = coords.x - touchStartX;
+		if (animatingNow === true) {
+			Ti.API.debug("Animating now, newLeft : " + newLeft);
+		}
 
-	if (animatingNow === true) {
-		Ti.API.debug("Animating now, newLeft : " + newLeft);
-	}
+		if (animatingNow === false && ((touchRightStarted && newLeft <= 200 && newLeft >= 0 && !disableLeft) || (touchLeftStarted && newLeft <= 0 && newLeft >= -200 && !disableRight))) {
 
-	if (animatingNow === false && ((touchRightStarted && newLeft <= 200 && newLeft >= 0 && !disableLeft) || (touchLeftStarted && newLeft <= 0 && newLeft >= -200 && !disableRight))) {
-
-		var scale = 1 - ((Math.abs(newLeft) / 200) * 0.3);
-		var scaleMenu = 1.3 - ((Math.abs(newLeft) / 200) * 0.3);
-		var animation = Ti.UI.createAnimation({
-			left : newLeft,
-			transform : matrix2d.scale(scale, scale),
-			duration : 10
-		});
-		animatingNow = true;
-		$.movableview.animate(animation, function() {
-			animatingNow = false;
-		});
-		if (newLeft > 0) {
-
-			$.leftMenu.animate({
-				transform : matrix2d.scale(scaleMenu, scaleMenu),
-				opacity : Math.abs(newLeft) / 200,
+			var scale = 1 - ((Math.abs(newLeft) / 200) * 0.3);
+			var scaleMenu = 1.3 - ((Math.abs(newLeft) / 200) * 0.3);
+			var animation = Ti.UI.createAnimation({
+				left : newLeft,
+				transform : matrix2d.scale(scale, scale),
 				duration : 10
 			});
-		} else {
-			$.rightMenu.animate({
-				transform : matrix2d.scale(scaleMenu, scaleMenu),
-				opacity : Math.abs(newLeft) / 200,
-				duration : 10
+			animatingNow = true;
+			$.movableview.animate(animation, function() {
+				animatingNow = false;
+			});
+			if (newLeft > 0) {
+
+				$.leftMenu.animate({
+					transform : matrix2d.scale(scaleMenu, scaleMenu),
+					opacity : Math.abs(newLeft) / 200,
+					duration : 10
+				});
+			} else {
+				$.rightMenu.animate({
+					transform : matrix2d.scale(scaleMenu, scaleMenu),
+					opacity : Math.abs(newLeft) / 200,
+					duration : 10
+				});
+			}
+		} else if (animatingNow === false) {
+			// Sometimes newLeft goes beyond its bounds so the view gets stuck.
+			// This is a hack to fix that.
+			if ((touchRightStarted && newLeft < 0) || (touchLeftStarted && newLeft > 0)) {
+				$.movableview.left = 0;
+				$.movableview.transform = matrix2d.scale(1, 1);
+				$.leftMenu.opacity = $.rightMenu.opacity = 0;
+				$.leftMenu.transform = matrix2d.scale(1.3, 1.3);
+				$.rightMenu.transform = matrix2d.scale(1.3, 1.3);
+			} else if (touchRightStarted && newLeft > 200 && !disableLeft) {
+				$.movableview.left = 200;
+				$.movableview.transform = matrix2d.scale(0.7, 0.7);
+				$.leftMenu.opacity = 1;
+				$.leftMenu.transform = matrix2d.scale(1, 1);
+			} else if (touchLeftStarted && newLeft < -200 && !disableRight) {
+				$.movableview.left = -200;
+				$.movableview.transform = matrix2d.scale(0.7, 0.7);
+				$.rightMenu.opacity = 1;
+				$.rightMenu.transform = matrix2d.scale(1, 1);
+			}
+		}
+		if (newLeft > 5 && !touchLeftStarted && !touchRightStarted && !disableLeft) {
+			touchRightStarted = true;
+			Ti.App.fireEvent("sliderToggled", {
+				hasSlided : false,
+				direction : "right"
+			});
+		} else if (newLeft < -5 && !touchRightStarted && !touchLeftStarted && !disableRight) {
+			touchLeftStarted = true;
+			Ti.App.fireEvent("sliderToggled", {
+				hasSlided : false,
+				direction : "left"
 			});
 		}
-	} else if (animatingNow === false) {
-		// Sometimes newLeft goes beyond its bounds so the view gets stuck.
-		// This is a hack to fix that.
-		if ((touchRightStarted && newLeft < 0) || (touchLeftStarted && newLeft > 0)) {
-			$.movableview.left = 0;
-			$.movableview.transform = matrix2d.scale(1, 1);
-			$.leftMenu.opacity = $.rightMenu.opacity = 0;
-			$.leftMenu.transform = matrix2d.scale(1.3, 1.3);
-			$.rightMenu.transform = matrix2d.scale(1.3, 1.3);
-		} else if (touchRightStarted && newLeft > 200 && !disableLeft) {
-			$.movableview.left = 200;
-			$.movableview.transform = matrix2d.scale(0.7, 0.7);
-			$.leftMenu.opacity = 1;
-			$.leftMenu.transform = matrix2d.scale(1, 1);
-		} else if (touchLeftStarted && newLeft < -200 && !disableRight) {
-			$.movableview.left = -200;
-			$.movableview.transform = matrix2d.scale(0.7, 0.7);
-			$.rightMenu.opacity = 1;
-			$.rightMenu.transform = matrix2d.scale(1, 1);
-		}
-	}
-	if (newLeft > 5 && !touchLeftStarted && !touchRightStarted && !disableLeft) {
-		touchRightStarted = true;
-		Ti.App.fireEvent("sliderToggled", {
-			hasSlided : false,
-			direction : "right"
-		});
-	} else if (newLeft < -5 && !touchRightStarted && !touchLeftStarted && !disableRight) {
-		touchLeftStarted = true;
-		Ti.App.fireEvent("sliderToggled", {
-			hasSlided : false,
-			direction : "left"
-		});
-	}
-});
+	});
+}
 
 exports.toggleLeftSlider = function() {
 
@@ -245,8 +249,8 @@ exports.handleRotation = function() {
 	 $.ds.handleRotation();
 	 });
 	 */
-	$.movableview.width = $.navview.width = Ti.Platform.displayCaps.platformWidth;
-	$.movableview.height = $.navview.height = Ti.Platform.displayCaps.platformHeight;
+	$.movableview.width = Ti.Platform.displayCaps.platformWidth + "px";
+	$.movableview.height = (Ti.Platform.displayCaps.platformHeight - 50) + "px";
 };
 
 $.init = function(args) {
