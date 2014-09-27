@@ -23,4 +23,6 @@ Ti.App.addEventListener("sliderToggled", function(e) {
 	}
 });
 
+Ti.Gesture.addEventListener("orientationchange", $.ds.handleRotation);
+
 $.win.open();
