@@ -30,8 +30,10 @@ var animatingNow = false;
 
 var leftButton = {}, rightButton = {}, disableLeft = false, disableRight = false;
 
-$.movableview.width = Ti.Platform.displayCaps.platformWidth + "px";
-$.movableview.height = (Ti.Platform.displayCaps.platformHeight - 50) + "px";
+if (OS_ANDROID) {
+	$.movableview.width = Ti.Platform.displayCaps.platformWidth + "px";
+	$.movableview.height = (Ti.Platform.displayCaps.platformHeight - 50) + "px";
+}
 
 // Scale menus
 if (!disableLeft) {
@@ -249,8 +251,13 @@ exports.handleRotation = function() {
 	 $.ds.handleRotation();
 	 });
 	 */
-	$.movableview.width = Ti.Platform.displayCaps.platformWidth + "px";
-	$.movableview.height = (Ti.Platform.displayCaps.platformHeight - 50) + "px";
+	if (OS_ANDROID) {
+		$.movableview.width = Ti.Platform.displayCaps.platformWidth + "px";
+		$.movableview.height = (Ti.Platform.displayCaps.platformHeight - 50) + "px";
+	} else {
+		$.movableview.width = Ti.Platform.displayCaps.platformWidth;
+		$.movableview.height = Ti.Platform.displayCaps.platformHeight;
+	}
 };
 
 $.init = function(args) {

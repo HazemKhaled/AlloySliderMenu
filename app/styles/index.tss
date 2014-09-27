@@ -1,3 +1,6 @@
 "#win": {
 	backgroundImage: "/images/Stars.png"
 }
+"Window[platform=android]": {
+	exitOnClose: true
+}
